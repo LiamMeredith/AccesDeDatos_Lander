@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+        <title>Lunar Landing in HTML5</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery-3.1.1.min.js"></script>
+        <script src="js/lunar.js"></script>	
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="css/component.css" />
+        <script>
+            angular.module('myApp', [])
+                    .controller('myCtrl', function ($scope, $http) {
+                        $scope.showBoolean = false;
+                        $scope.showBooleanScore = false;
+                        $scope.showBooleanVeces = false;
+                        $scope.sendPost = function () {
+                            $scope.close();
+                            $http({
+                                url: 'InicioDeSesion',
+                                method: 'POST'
+                            }).then(function (response) {
+
+                                $scope.times = response.data;
+                                $scope.showBoolean = true;
+                                console.log(response);
+
+                            }, function (response) {
+                                //fail case
+                                console.log(response);
+                                $scope.message = response;
+                            });
+                        };
+                        $scope.postTop10 = function () {
+                            $scope.close();
+                            $http({
+                                url: 'GameRegistration',
+                                method: 'POST'
+                            }).then(function (response) {
+
+                                $scope.scores = response.data;
+                                $scope.showBooleanScore = true;
+                                console.log(response);
+
+                            }, function (response) {
+                                //fail case
+                                console.log(response);
+                                $scope.message = response;
+                            });
+                        };
+                        $scope.postTopViciats = function () {
+                            $scope.close();
+                            $http({
+                                url: 'MasViciados',
+                                method: 'POST'
+                            }).then(function (response) {
+
+                                $scope.veces = response.data;
+                                $scope.showBooleanVeces = true;
+                                console.log(response);
+
+                            }, function (response) {
+                                //fail case
+                                console.log(response);
+                                $scope.message = response;
+                            });
+                        };
+			$scope.finished = function () {
+                            var user = localStorage.getItem('user');
+                            $http({
+                                url: 'GameRegistration',
+                                method: 'GET',
+                                params: {score: ship.v, name:user}
+                            });
+                        };
+                        $scope.close = function () {
+                            $scope.showBoolean = false;
+                            $scope.showBooleanScore = false;
+                            $scope.showBooleanVeces = false;
+                        };
+                    });
+        </script>
+    </head>
+    <body ng-app='myApp' ng-controller="myCtrl" id="divID">
+        <div id="logs" ng-show="showBoolean">
+            <div class="container">
+                <h1></h1>
+                <h2></h2>
+                <p ng-repeat="x in times">{{x.name + ':  ' + x.time}}</p><br>
+                <a href="#" ng-click="close()">Close</a>
+            </div>
+
+        </div>
+        <div id="t10" ng-show="showBooleanScore">
+            <div class="container">
+                <h1></h1>
+                <h2></h2>
+                <p ng-repeat="x in scores">{{x.name + ':  ' + x.score}}</p><br>
+                <a href="#" ng-click="close()">Close</a>
+            </div>
+
+        </div>
+                <div id="t10" ng-show="showBooleanVeces">
+            <div class="container">
+                <h1></h1>
+                <h2></h2>
+                <p ng-repeat="x in veces">{{x.name + ':  ' + x.veces}}</p><br>
+                <a href="#" ng-click="close()">Close</a>
+            </div>
+
+        </div>
+
+
+        <div class="side">
+            <nav class="dr-menu">
+                <div class="dr-trigger" ><span class="dr-icon dr-icon-menu"></span><a class="dr-label">Account</a></div>
+                <ul>
+                    <li id="1" ><a  class="dr-icon dr-icon-settings" href="#" class="inline" onClick="change()">Dificultad</a><div id="diffi" class="inline">Easy</div></li>
+                    <li id="2"><a class="dr-icon dr-icon-settings" href="#" ng-click="sendPost()">Last logged in</a></li>
+                    <li id="3"><a class="dr-icon dr-icon-settings" href="#" ng-click="postTop10()">Top 10</a></li>
+                    <li id="4"><a class="dr-icon dr-icon-settings" href="#" ng-click="postTopViciats()">Top 10 viciados</a></li>
+                    <li id="5"><a class="dr-icon dr-icon-user" href="#"  onClick="LogOut()">LogOut</a></li>
+                </ul>
+            </nav>
+        </div>
+        <script src="js/ytmenu.js"></script>	
+        <div id="ini">
+            <div class="container">
+                <h1 id="nameInit"></h1><h2>Are you ready?</h2>
+                <a href="#" onclick="reset();">GO!</a>
+            </div>
+        </div>
+        <div id="state">
+            <div class="container">
+                <h1></h1>
+                <h2 id="score"></h2>
+                <div class="ads">google ads</div>
+                <a href="#" onclick="reset();">Play again</a>
+                <a href="#" ng-click="finished();">Register game</a>
+            </div>
+        </div>
+        <div id="game">
+            <div id="gauge"><div></div></div>
+            <div id="ship"></div>
+            <div id="explode"></div>
+            <div id="moon">
+                <div id="landing-pad"><div id="ms">-</div></div>
+            </div>
+        </div>
+        <script>
+                    (function (i, s, o, g, r, a, m) {
+                        i['GoogleAnalyticsObject'] = r;
+                        i[r] = i[r] || function () {
+                            (i[r].q = i[r].q || []).push(arguments)
+                        }, i[r].l = 1 * new Date();
+                        a = s.createElement(o),
+                                m = s.getElementsByTagName(o)[0];
+                        a.async = 1;
+                        a.src = g;
+                        m.parentNode.insertBefore(a, m)
+                    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+                    ga('create', 'UA-41665373-8', 'auto');
+                    ga('send', 'pageview');
+                    document.getElementById("nameInit").innerHTML = localStorage.getItem('user');
+        </script>
+    </body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <!--<script>
+            var user = localStorage.getItem('user');
+            $(document).ready(function () {
+                $.get('LogInServlet', {
+                    userName: user
+                }, function (responseText) {
+                    if (responseText === 'true') {
+                        $("#login").show();
+                    } else {
+                        $("#loged").show();
+                    }
+                });
+            });
+        </script>-->
+        <script>
+            angular.module('myApp', [])
+                    .controller('myCtrl', function ($scope, $http) {
+                        $scope.showBoolean = false;
+                        $scope.registration = false;
+                        $scope.hello = {name: "Stranger"};
+                        $scope.boolean = "";
+                        $scope.test = "";
+                        $scope.sendPost = function () {
+                            $http({
+                                url: 'LogInServlet',
+                                method: 'POST',
+                                data: {
+                                    'name': $scope.username,
+                                    'pass': $scope.userpass
+                                }
+                            }).then(function (response) {
+                                console.log(response);
+                                var str = response.data.boolean;
+                                if (str === "true") {
+                                    localStorage.setItem('user', response.data.name);
+                                    localStorage.setItem('pass', response.data.pass);
+                                    window.location.href = "game.html";
+                                } else {
+                                    $scope.registration = true;
+                                }
+                            }, function (response) {
+                                //fail case
+                                console.log(response);
+                                $scope.message = response;
+                            });
+                        };
+                        $scope.sendRegPost = function () {
+                            $http({
+                                url: 'Registration',
+                                method: 'POST',
+                                data: {
+                                    'name': $scope.usernameReg,
+                                    'pass': $scope.userpassReg,
+                                    'email': $scope.userEmailReg
+                                }
+                            }).then(function (response) {
+                                var str = response.data.boolean;
+                                if (str === "true") {
+                                    localStorage.setItem('user', response.data.name);
+                                    localStorage.setItem('pass', response.data.pass);
+                                    window.location.href = "game.html";
+                                }
+                            }, function (response) {
+                                //fail case
+                                console.log(response);
+                                $scope.message = response;
+                            });
+                        };
+                        $scope.sendGet = function () {
+                            var user = localStorage.getItem('user');
+                            var pass = localStorage.getItem('pass');
+                            $http({
+                                method: 'GET',
+                                url: 'LogInServlet',
+                                params: {name: user, pass: pass}
+                            }).success(function (data) {
+
+                                var str = data.boolean;
+                                if (str === "true") {
+                                    $scope.test = data;
+                                    window.location.href = "game.html";
+                                }
+
+                            }).error(function (data) {
+                                // called asynchronously if an error occurs
+                                // or server returns response with an error status.
+                            });
+                        };
+                        $scope.toggle = function () {
+                            $scope.registration = true;
+                        };
+                        $scope.sendGet();
+                    });
+        </script>
+    </head>
+    <body ng-app='myApp' ng-init="sengGet()">
+        <div id="login" ng-controller="myCtrl">   
+            <div id="ini">
+                <h1>Welcome {{hello.name}}</h1>
+                <form ng-submit="sendPost()">
+                    User: <input ng-model="username"/><br/><br/>
+                    Password: <input ng-model="userpass" name="userpass"/><br/><br/>
+                    <button type="submit">Send</button>
+                    <button ng-click="toggle()">Not registered?</button>
+                </form>
+            </div>
+            <div id="reg" ng-show="registration">
+                <h1>Registro</h1>
+                <form ng-submit="sendRegPost()">
+                    User: <input ng-model="usernameReg"/><br/><br/>
+                    Password: <input ng-model="userpassReg" name="userpass"/><br/><br/>
+                    Email: <input ng-model="userEmailReg"/><br/><br/>
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+            
+        </div>
+    </body>
+</html>
